@@ -1,0 +1,45 @@
+# Render Blueprint for ARC REACTOR (free tier)
+# Combined Web Service: Serves Dashboard + runs Scanner as background task
+services:
+  - type: web
+    name: arc-reactor
+    runtime: python
+    region: oregon
+    plan: free
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    autoDeploy: true
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: ENV
+        value: production
+      - key: LOG_LEVEL
+        value: INFO
+      - key: DATABASE_URL
+        fromDatabase:
+          name: arc-reactor-db
+          property: connectionString
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_CHAT_ID
+        sync: false
+      - key: ETH_RPC_URL
+        sync: false
+      - key: ETH_ETHERSCAN_API_KEY
+        sync: false
+      - key: BSC_BSCSCAN_API_KEY
+        sync: false
+      - key: POLYGON_POLYGONSCAN_API_KEY
+        sync: false
+      - key: ARBITRUM_ARBISCAN_API_KEY
+        sync: false
+      - key: COINGECKO_API_KEY
+        sync: false
+
+databases:
+  - name: arc-reactor-db
+    region: oregon
+    plan: free
+    postgresqlVersion: 15
